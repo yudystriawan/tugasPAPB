@@ -5,9 +5,15 @@ import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    private void startTrackingLocation(){
+
     }
 }

@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FusedLocationProviderClient mFusedLocationClient;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        startTrackingLocation();
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,11 +194,11 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Location location) {
                             if (location != null) {
+                                try {
 //                                String data = "Latitude: " + location.getLatitude()
 //                                        + "\n Longitude: " + location.getLongitude();
 
-                                Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-                                try {
+                                    Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
                                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
                                     if (addresses.size() > 0) {
                                         String lokasi = String.valueOf(addresses.get(0).getLocality());

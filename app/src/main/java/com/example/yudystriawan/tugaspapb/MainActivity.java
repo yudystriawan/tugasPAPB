@@ -48,11 +48,12 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private EditText searchTxt;
-    private Button searchBtn,location;
+    private Button searchBtn,locationBtn;
     private TextView textTemp, textCity, textDesc, textDate, textWind , textHumidity, textPressure, locationText;
     private ImageView weatherImg;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FusedLocationProviderClient mFusedLocationClient;
+    String lokasi;
 
 
     @Override
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         textHumidity =  findViewById(R.id.humidity);
         textPressure =  findViewById(R.id.pressure);
         weatherImg =  findViewById(R.id.weather_img);
-        location =  findViewById(R.id.location);
+        locationBtn =  findViewById(R.id.locationBtn);
 
 
         searchBtn.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         startTrackingLocation();
-        location.setOnClickListener(new View.OnClickListener() {
+        locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startTrackingLocation();
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     String pressure = main_object.getString("pressure") + " hpa";
 
                     textTemp.setText(temp);
-                    textCity.setText(city);
+                    textCity.setText(lokasi);
                     textDesc.setText(detail);
                     textDate.setText(formatted_date);
                     textWind.setText(wind);
@@ -201,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                                     Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
                                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
                                     if (addresses.size() > 0) {
-                                        String lokasi = String.valueOf(addresses.get(0).getLocality());
+                                        lokasi = String.valueOf(addresses.get(0).getLocality());
                                         findWeather(lokasi);
                                     }
 

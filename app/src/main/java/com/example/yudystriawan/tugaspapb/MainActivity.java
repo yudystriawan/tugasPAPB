@@ -2,6 +2,7 @@ package com.example.yudystriawan.tugaspapb;
 
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FusedLocationProviderClient mFusedLocationClient;
     String lokasi;
+    double latitude, longitude;
 
 
     @Override
@@ -88,11 +90,16 @@ public class MainActivity extends AppCompatActivity {
         locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startTrackingLocation();
+//                startTrackingLocation();
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra("lat", latitude );
+                intent.putExtra("lon", longitude);
+                startActivity(intent);
             }
         });
     }
 
+    //ini buat search
     private void findWeather(String Lokasi) {
         String url = "http://api.openweathermap.org/data/2.5/weather?q="+Lokasi+"&appid=3fd8da85e581b3ff8dfb191ea4454620";
 
@@ -182,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         queue.add(jor);
     }
 
+    //ini buat lokasi(GL)
     private void findWeather(double lat, double lon) {
         String url = "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid=3fd8da85e581b3ff8dfb191ea4454620";
 
@@ -286,8 +294,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onSuccess(Location location) {
                             if (location != null) {
                                 try {
-//                                String data = "Latitude: " + location.getLatitude()
-//                                        + "\n Longitude: " + location.getLongitude();
+                                latitude =  location.getLatitude();
+                                longitude =  location.getLongitude();
 
                                     Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
                                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);

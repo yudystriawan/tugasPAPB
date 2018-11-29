@@ -182,6 +182,96 @@ public class MainActivity extends AppCompatActivity {
         queue.add(jor);
     }
 
+    private void findWeather(double lat, double lon) {
+        String url = "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid=3fd8da85e581b3ff8dfb191ea4454620";
+
+        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET,
+                url,
+                null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject main_object = response.getJSONObject("main");
+                    JSONArray array = response.getJSONArray("weather");
+
+                    JSONObject object = array.getJSONObject(0);
+
+                    String temp = String.valueOf(Math.round((main_object.getDouble("temp")-273.15)));
+                    String city = response.getString("name");
+                    String weather = object.getString("main");
+                    String detail = object.getString("description");
+
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEEE-MM-dd");
+                    String formatted_date = sdf.format(calendar.getTime());
+
+                    JSONObject wind_object = response.getJSONObject("wind");
+                    String wind = wind_object.getString("speed")+" m/s";
+
+                    String humidity = main_object.getString("humidity")+ "%";
+                    String pressure = main_object.getString("pressure") + " hpa";
+
+                    textTemp.setText(temp);
+                    textCity.setText(city);
+                    textDesc.setText(detail);
+                    textDate.setText(formatted_date);
+                    textWind.setText(wind);
+                    textHumidity.setText(humidity);
+                    textPressure.setText(pressure);
+
+                    switch(weather){
+                        case "Clouds":
+                            weatherImg.setImageResource(R.drawable.cloudy);
+                            break;
+                        case "Clear":
+                            weatherImg.setImageResource(R.drawable.sunny);
+                            break;
+                        case "Rain":
+                            weatherImg.setImageResource(R.drawable.rain);
+                            break;
+                        case "Thunderstorm":
+                            weatherImg.setImageResource(R.drawable.storm);
+                            break;
+                        case "Drizzle":
+                            weatherImg.setImageResource(R.drawable.drop);
+                            break;
+                        case "Snow":
+                            weatherImg.setImageResource(R.drawable.snow);
+                            break;
+                        default:
+                            weatherImg.setImageResource(R.drawable.haze);
+                    }
+                } catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                String message = null;
+                if (volleyError instanceof NetworkError) {
+                    message = "Cannot connect to Internet...Please check your connection";
+                } else if (volleyError instanceof ServerError) {
+                    message = "The location could not be found. Please try again";
+                } else if (volleyError instanceof AuthFailureError) {
+                    message = "Cannot connect to Internet...Please check your connection";
+                } else if (volleyError instanceof ParseError) {
+                    message = "Parsing error! Please try again after some time";
+                } else if (volleyError instanceof NoConnectionError) {
+                    message = "Cannot connect to Internet...Please check your connection";
+                } else if (volleyError instanceof TimeoutError) {
+                    message = "Connection TimeOut! Please check your internet connection.";
+                }
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+
+            }
+        }
+        );
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(jor);
+    }
+
+
     private void startTrackingLocation() {
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -202,8 +292,7 @@ public class MainActivity extends AppCompatActivity {
                                     Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
                                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
                                     if (addresses.size() > 0) {
-                                        lokasi = String.valueOf(addresses.get(0).getLocality());
-                                        findWeather(lokasi);
+                                        findWeather(location.getLatitude(), location.getLongitude());
                                     }
 
                                 } catch (IOException e) {

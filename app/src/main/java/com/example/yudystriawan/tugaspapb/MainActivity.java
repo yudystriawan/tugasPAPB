@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     String pressure = main_object.getString("pressure") + " hpa";
 
                     textTemp.setText(temp);
-                    textCity.setText(lokasi);
+                    textCity.setText(city);
                     textDesc.setText(detail);
                     textDate.setText(formatted_date);
                     textWind.setText(wind);

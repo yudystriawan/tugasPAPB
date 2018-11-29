@@ -11,6 +11,8 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,6 +44,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -49,7 +52,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private EditText searchTxt;
-    private Button searchBtn,locationBtn;
+    private Button searchBtn,locationBtn, detailBtn;
     private TextView textTemp, textCity, textDesc, textDate, textWind , textHumidity, textPressure, locationText;
     private ImageView weatherImg;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         textPressure =  findViewById(R.id.pressure);
         weatherImg =  findViewById(R.id.weather_img);
         locationBtn =  findViewById(R.id.locationBtn);
+        detailBtn =  findViewById(R.id.detailBtn);
 
 
         searchBtn.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +85,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String cari = searchTxt.getText().toString();
                 findWeather(cari);
+            }
+        });
+
+        detailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Detail.class);
+                intent.putExtra("lat", latitude );
+                intent.putExtra("lon", longitude);
+                startActivity(intent);
             }
         });
 
@@ -97,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+
 
     }
 

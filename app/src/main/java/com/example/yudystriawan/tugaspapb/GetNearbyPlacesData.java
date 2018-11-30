@@ -1,6 +1,6 @@
 package com.example.yudystriawan.tugaspapb;
-
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -8,8 +8,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.List;
+
 
 public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
 
@@ -25,7 +28,6 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
             DownloadUrl downloadUrl = new DownloadUrl();
             googlePlacesData = downloadUrl.readUrl(url);
         } catch (Exception e) {
-
         }
         return googlePlacesData;
     }
@@ -34,7 +36,7 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
     protected void onPostExecute(String result) {
         List<HashMap<String, String>> nearbyPlacesList = null;
         DataParser dataParser = new DataParser();
-        nearbyPlacesList = dataParser.parse(result);
+        nearbyPlacesList =  dataParser.parse(result);
         ShowNearbyPlaces(nearbyPlacesList);
     }
 
@@ -50,10 +52,10 @@ public class GetNearbyPlacesData extends AsyncTask<Object, String, String> {
             markerOptions.position(latLng);
             markerOptions.title(placeName + " : " + vicinity);
             mMap.addMarker(markerOptions);
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+//            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             //move map camera
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
         }
     }
 }

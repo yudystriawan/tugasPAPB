@@ -30,6 +30,8 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -90,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startTrackingLocation();
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                 intent.putExtra("lat", latitude );
                 intent.putExtra("lon", longitude);
@@ -341,5 +342,7 @@ public class MainActivity extends AppCompatActivity {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return locationRequest;
     }
+
+
 }
 

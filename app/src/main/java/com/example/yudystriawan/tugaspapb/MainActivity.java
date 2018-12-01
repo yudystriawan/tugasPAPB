@@ -7,6 +7,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,27 +34,44 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText searchTxt;
-    private Button searchBtn,locationBtn;
-    private TextView textTemp, textCity, textDesc, textDate, textWind , textHumidity, textPressure, locationText;
+    private Button searchBtn,locationBtn, button;
+    private TextView textTemp, textCity, textDesc, textDate, textWind , textHumidity, textPressure, locationText, textView;
     private ImageView weatherImg;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FusedLocationProviderClient mFusedLocationClient;
     String lokasi;
+
+    private FirebaseFirestore db;
 
 
     @Override
@@ -72,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         textPressure =  findViewById(R.id.pressure);
         weatherImg =  findViewById(R.id.weather_img);
         locationBtn =  findViewById(R.id.locationBtn);
+        textView = findViewById(R.id.textView);
+        button = findViewById(R.id.button);
 
 
         searchBtn.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +99,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String cari = searchTxt.getText().toString();
                 findWeather(cari);
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFood();
             }
         });
 
@@ -91,7 +118,89 @@ public class MainActivity extends AppCompatActivity {
                 startTrackingLocation();
             }
         });
+
+
+        /////////////////////
+        db = FirebaseFirestore.getInstance();
+
+        db.collection("data").document("EBxOMPmTCRDLpS4QdoN0")
+            .get()
+            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    textView.setText(documentSnapshot.getData()+"");
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    textView.setText("Failde");
+                }
+            })
+        ;
     }
+
+    private void getFood() {
+        String url = "https://www.foody.id/__get/Place/HomeListPlace?t=1543576857983&page=1&lat=-7.255521&lon=112.75288&count=12&districtId=990&cateId=&cuisineId=&isReputation=&type=1";
+        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET,
+                url,
+                null, new Response.Listener<JSONObject>()
+                {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            String cityID = response.getString("CityId");
+                            textView.setText(cityID);
+
+                        } catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        String message = null;
+                        if (volleyError instanceof NetworkError) {
+                            message = "Cannot connect to Internet...Please check your connection";
+                        } else if (volleyError instanceof ServerError) {
+                            message = "The location could not be found. Please try again";
+                        } else if (volleyError instanceof AuthFailureError) {
+                            message = "Cannot connect to Internet...Please check your connection";
+                        } else if (volleyError instanceof ParseError) {
+                            message = "Parsing error! Please try again after some time";
+                        } else if (volleyError instanceof NoConnectionError) {
+                            message = "Cannot connect to Internet...Please check your connection";
+                        } else if (volleyError instanceof TimeoutError) {
+                            message = "Connection TimeOut! Please check your internet connection.";
+                        }
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+
+
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("Accept", "application/json, text/plain, */*");
+                params.put("Accept-Encoding", "gzip, deflate, br");
+                params.put("Accept-Language", "id,id-ID;q=0.9,en-US;q=0.8,en;q=0.7");
+                params.put("Connection", "keep-alive");
+                params.put("Cookie", "flg=id; gcat=food; _ga=GA1.2.2082587379.1521334131; ASP.NET_SessionId=2f2s5co0mpbzkrsarwreqrmt; __ondemand_sessionid=afvz1g3dmrre3a1oe4zkm3kt; _gid=GA1.2.1862700872.1543471910; __utmc=20816431; __utmz=20816431.1543471918.3.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); fd.res.view.310=126997; floc=320; _gat=1; _gat_ads=1; __utma=20816431.2082587379.1521334131.1543479554.1543483312.5; __utmt_UA-33292184-1=1; _fbp=fb.1.1543483314682.1905115791; __utmb=20816431.2.10.1543483312");
+                params.put("Host", "www.foody.id");
+                params.put("Referer", "https://www.foody.id/surabaya");
+                params.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36");
+                params.put("X-Requested-With", "XMLHttpRequest");
+
+
+                return params;
+            }
+        };
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(jor);    }
+
 
     private void findWeather(String Lokasi) {
         String url = "http://api.openweathermap.org/data/2.5/weather?q="+Lokasi+"&appid=3fd8da85e581b3ff8dfb191ea4454620";
@@ -321,7 +430,136 @@ public class MainActivity extends AppCompatActivity {
                             "Permission denied",
                             Toast.LENGTH_SHORT).show();
                 }
-                break;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
     }
 

@@ -37,6 +37,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +46,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -58,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     FusedLocationProviderClient mFusedLocationClient;
     String lokasi;
     double latitude, longitude;
+    private ArrayList<Restoran> listRestSample;
+    int sizeData = 0;
 
 
     @Override
@@ -303,7 +308,36 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-    
 
+
+
+
+    private void readFB() {
+
+        db = FirebaseFirestore.getInstance();
+
+        db.collection("DaftarMakananSample")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        sizeData = queryDocumentSnapshots.size();
+                        String id, name, phone, rating, type, weather, latitude, longitude;
+                        for (int i = 0; i < sizeData ; i++){
+                            id = queryDocumentSnapshots.getDocuments().get(i).get("Id").toString();
+                            name = queryDocumentSnapshots.getDocuments().get(i).get("Name").toString();
+                            phone = queryDocumentSnapshots.getDocuments().get(i).get("Phone").toString();
+                            rating = queryDocumentSnapshots.getDocuments().get(i).get("Rating").toString();
+                            type = queryDocumentSnapshots.getDocuments().get(i).get("Type").toString();
+                            weather = queryDocumentSnapshots.getDocuments().get(i).get("Weather").toString();
+                            latitude = queryDocumentSnapshots.getDocuments().get(i).get("Latitude").toString();
+                            longitude = queryDocumentSnapshots.getDocuments().get(i).get("Longitude").toString();
+
+                            listRestSample.add(new Restoran(id, name, phone, rating, type, weather, latitude, longitude));
+                        }
+                    }
+                });
+
+    }
 }
 

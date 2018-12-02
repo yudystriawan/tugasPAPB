@@ -330,11 +330,11 @@ public class MainActivity extends AppCompatActivity {
                             longitude = queryDocumentSnapshots.getDocuments().get(i).get("Longitude").toString();
 
                             listRestSample.add(new Restaurant(id, name, phone, rating, type, weather, latitude, longitude));
+                            destLat = Double.valueOf(latitude);
+                            destLon = Double.valueOf(longitude);
+
                         }
-                        if (listRestSample!=null){
-                            destLat = Double.valueOf(listRestSample.get(0).getLatitude());
-                            destLon = Double.valueOf(listRestSample.get(0).getLongitude());
-                        }
+
                     }
                 });
 

@@ -30,11 +30,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -45,9 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageView weatherImg;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FusedLocationProviderClient mFusedLocationClient;
-    String lokasi;
-    double latitude, longitude;
-    private ArrayList<Restoran> listRestSample;
+    double originLat, originLon, destLat, destLon;
+    private ArrayList<Restaurant> listRestSample;
+    private FirebaseFirestore db;
     int sizeData = 0;
 
 
@@ -79,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         weatherImg =  findViewById(R.id.weather_img);
         locationBtn =  findViewById(R.id.locationBtn);
 
-
+        readFB();
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,8 +89,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                intent.putExtra("lat", latitude );
-                intent.putExtra("lon", longitude);
+                intent.putExtra("originLat", originLat );
+                intent.putExtra("originLon", originLon);
+                intent.putExtra("destLat", destLat);
+                intent.putExtra("destLon", destLon);
                 startActivity(intent);
             }
         });
@@ -270,8 +266,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onSuccess(Location location) {
                             if (location != null) {
                                 try {
-                                latitude =  location.getLatitude();
-                                longitude =  location.getLongitude();
+                                originLat =  location.getLatitude();
+                                originLon =  location.getLongitude();
 
                                     Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
                                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
@@ -333,7 +329,11 @@ public class MainActivity extends AppCompatActivity {
                             latitude = queryDocumentSnapshots.getDocuments().get(i).get("Latitude").toString();
                             longitude = queryDocumentSnapshots.getDocuments().get(i).get("Longitude").toString();
 
-                            listRestSample.add(new Restoran(id, name, phone, rating, type, weather, latitude, longitude));
+                            listRestSample.add(new Restaurant(id, name, phone, rating, type, weather, latitude, longitude));
+                        }
+                        if (listRestSample!=null){
+                            destLat = Double.valueOf(listRestSample.get(0).getLatitude());
+                            destLon = Double.valueOf(listRestSample.get(0).getLongitude());
                         }
                     }
                 });

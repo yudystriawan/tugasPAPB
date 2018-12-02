@@ -22,10 +22,12 @@ import java.net.URL;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    MarkerOptions origin, place2;
-    private static final LatLng bunderanUB= new LatLng(-7.952656, 112.614330);
+    MarkerOptions origin, destination;
+    private static LatLng bunderanUB= new LatLng(-7.952656, 112.614330);
+    private static LatLng locationDest;
     private static LatLng locationNow;
     private Button btnDirect;
+    double originLat, originLon, destinationLat, destinationLon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +39,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         Bundle extras = getIntent().getExtras();
         if (extras != null){
-            locationNow = new LatLng(extras.getDouble("lat"),extras.getDouble("lon"));
+
+            originLat = extras.getDouble("originLat");
+            originLon = extras.getDouble("originLon");
+            destinationLat = extras.getDouble("destLat");
+            destinationLon = extras.getDouble("destLon");
+            locationNow = new LatLng(originLat,originLon);
+            locationDest = new LatLng(destinationLat,destinationLon);
         }
 
         btnDirect = findViewById(R.id.btnDirect);
@@ -45,7 +53,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnDirect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OpenGoogleMap(bunderanUB.latitude, bunderanUB.longitude);
+                OpenGoogleMap(destinationLat, destinationLon);
             }
         });
     }
@@ -64,10 +72,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         Marker origin = mMap.addMarker(new MarkerOptions().position(locationNow).title("Your Here"));
         origin.showInfoWindow();
-        place2 = new MarkerOptions().position(bunderanUB).title("Destination").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+        destination = new MarkerOptions().position(locationDest).title("Destination").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationNow, 15));
 //        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 1000, null);
-        mMap.addMarker(place2);
+        mMap.addMarker(destination);
     }
 
     public void OpenGoogleMap(double latitude, double longitude){

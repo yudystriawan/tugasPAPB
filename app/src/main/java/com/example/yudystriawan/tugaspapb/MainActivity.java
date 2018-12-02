@@ -41,7 +41,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FusedLocationProviderClient mFusedLocationClient;
     double originLat, originLon, destLat, destLon;
-    String destName;
+    String destName, weatherNow;
     ArrayList<Restaurant> listRestSample = new ArrayList<Restaurant>();
     private FirebaseFirestore db;
     int sizeData = 0;
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         locationBtn =  findViewById(R.id.locationBtn);
         textLokasi = findViewById(R.id.lokasiTxt);
 
-        readFB();
+
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         startTrackingLocation();
+        readFB();
         locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //ini buat search
-    private void findWeather(String Lokasi) {
+        private void findWeather(String Lokasi) {
         String url = "http://api.openweathermap.org/data/2.5/weather?q="+Lokasi+"&appid=3fd8da85e581b3ff8dfb191ea4454620";
 
         JsonObjectRequest jor = new JsonObjectRequest(Request.Method.GET,
@@ -119,14 +122,19 @@ public class MainActivity extends AppCompatActivity {
 
                     String temp = String.valueOf(Math.round((main_object.getDouble("temp")-273.15)));
                     String city = response.getString("name");
-                    String weather = object.getString("main");
+                    weatherNow = object.getString("main");
                     String detail = object.getString("description");
+
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEEE-MM-dd");
+                    String formatted_date = sdf.format(calendar.getTime());
 
                     textTemp.setText(temp);
                     textCity.setText(city);
                     textDesc.setText(detail);
+                    textDate.setText(formatted_date);
 
-                    switch(weather){
+                    switch(weatherNow){
                         case "Clouds":
                             weatherImg.setImageResource(R.drawable.cloudy);
                             break;
@@ -195,14 +203,19 @@ public class MainActivity extends AppCompatActivity {
 
                     String temp = String.valueOf(Math.round((main_object.getDouble("temp")-273.15)));
                     String city = response.getString("name");
-                    String weather = object.getString("main");
+                    weatherNow = object.getString("main");
                     String detail = object.getString("description");
+
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEEE-MM-dd");
+                    String formatted_date = sdf.format(calendar.getTime());
 
                     textTemp.setText(temp);
                     textCity.setText(city);
                     textDesc.setText(detail);
+                    textDate.setText(formatted_date);
 
-                    switch(weather){
+                    switch(weatherNow){
                         case "Clouds":
                             weatherImg.setImageResource(R.drawable.cloudy);
                             break;
@@ -333,18 +346,21 @@ public class MainActivity extends AppCompatActivity {
                             longitude = queryDocumentSnapshots.getDocuments().get(i).get("Longitude").toString();
 
                             listRestSample.add(new Restaurant(id, name, phone, rating, type, weather, latitude, longitude));
-
-
                         }
-                        if (listRestSample.get(0) != null) {
-                            destLat = Double.valueOf(listRestSample.get(8).getLatitude());
-                            destLon = Double.valueOf(listRestSample.get(8).getLongitude());
-                            destName = listRestSample.get(8).getName();
-                            textLokasi.setText(destName);
+
+                        for (int i = 0; i < listRestSample.size(); i++){
+                            if (listRestSample.get(i).getWeather().equalsIgnoreCase(weatherNow)){
+                                destLat = Double.valueOf(listRestSample.get(i).getLatitude());
+                                destLon = Double.valueOf(listRestSample.get(i).getLongitude());
+                                destName = listRestSample.get(i).getName();
+                                textLokasi.setText(destName);
+                                break;
+                            }
                         }
                     }
                 });
 
     }
+
 }
 

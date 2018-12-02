@@ -47,8 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.addMarker(origin);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationNow, 15));
-        mMap.animateCamera(CameraUpdateFactory.zoomIn());
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 1000, null);
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 1000, null);
         mMap.addMarker(place2);
     }
 }

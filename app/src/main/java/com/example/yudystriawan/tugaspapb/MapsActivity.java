@@ -23,7 +23,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     MarkerOptions origin, destination;
-    private static LatLng bunderanUB= new LatLng(-7.952656, 112.614330);
     private static LatLng locationDest;
     private static LatLng locationNow;
     private Button btnDirect;

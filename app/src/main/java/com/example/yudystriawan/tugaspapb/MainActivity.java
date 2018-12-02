@@ -49,12 +49,12 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText searchTxt;
     private Button searchBtn,locationBtn;
-    private TextView textTemp, textCity, textDesc, textDate;
+    private TextView textTemp, textCity, textDesc, textDate, textLokasi;
     private ImageView weatherImg;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FusedLocationProviderClient mFusedLocationClient;
     double originLat, originLon, destLat, destLon;
-    private ArrayList<Restaurant> listRestSample;
+    ArrayList<Restaurant> listRestSample = new ArrayList<Restaurant>();
     private FirebaseFirestore db;
     int sizeData = 0;
 
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         textDate =  findViewById(R.id.date);
         weatherImg =  findViewById(R.id.weather_img);
         locationBtn =  findViewById(R.id.locationBtn);
+        textLokasi = findViewById(R.id.lokasiTxt);
 
         readFB();
         searchBtn.setOnClickListener(new View.OnClickListener() {
@@ -330,11 +331,15 @@ public class MainActivity extends AppCompatActivity {
                             longitude = queryDocumentSnapshots.getDocuments().get(i).get("Longitude").toString();
 
                             listRestSample.add(new Restaurant(id, name, phone, rating, type, weather, latitude, longitude));
-                            destLat = Double.valueOf(latitude);
-                            destLon = Double.valueOf(longitude);
+
 
                         }
-
+                        if (listRestSample.get(0) != null) {
+                            destLat = Double.valueOf(listRestSample.get(3).getLatitude());
+                            destLon = Double.valueOf(listRestSample.get(3).getLongitude());
+                            String namaLokasi = listRestSample.get(3).getName();
+                            textLokasi.setText(namaLokasi);
+                        }
                     }
                 });
 

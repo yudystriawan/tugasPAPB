@@ -27,6 +27,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static LatLng locationNow;
     private Button btnDirect;
     double originLat, originLon, destinationLat, destinationLon;
+    String destName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             originLon = extras.getDouble("originLon");
             destinationLat = extras.getDouble("destLat");
             destinationLon = extras.getDouble("destLon");
+            destName = extras.getString("destName");
             locationNow = new LatLng(originLat,originLon);
             locationDest = new LatLng(destinationLat,destinationLon);
         }
@@ -71,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         Marker origin = mMap.addMarker(new MarkerOptions().position(locationNow).title("Your Here"));
         origin.showInfoWindow();
-        destination = new MarkerOptions().position(locationDest).title("Destination").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+        destination = new MarkerOptions().position(locationDest).title(destName).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationNow, 15));
 //        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 1000, null);
         mMap.addMarker(destination);

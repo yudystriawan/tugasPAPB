@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FusedLocationProviderClient mFusedLocationClient;
     double originLat, originLon, destLat, destLon;
+    String destName;
     ArrayList<Restaurant> listRestSample = new ArrayList<Restaurant>();
     private FirebaseFirestore db;
     int sizeData = 0;
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("originLon", originLon);
                 intent.putExtra("destLat", destLat);
                 intent.putExtra("destLon", destLon);
+                intent.putExtra("destName", destName);
                 startActivity(intent);
             }
         });
@@ -335,10 +337,10 @@ public class MainActivity extends AppCompatActivity {
 
                         }
                         if (listRestSample.get(0) != null) {
-                            destLat = Double.valueOf(listRestSample.get(3).getLatitude());
-                            destLon = Double.valueOf(listRestSample.get(3).getLongitude());
-                            String namaLokasi = listRestSample.get(3).getName();
-                            textLokasi.setText(namaLokasi);
+                            destLat = Double.valueOf(listRestSample.get(8).getLatitude());
+                            destLon = Double.valueOf(listRestSample.get(8).getLongitude());
+                            destName = listRestSample.get(8).getName();
+                            textLokasi.setText(destName);
                         }
                     }
                 });

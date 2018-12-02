@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText searchTxt;
     private Button searchBtn,locationBtn;
-    private TextView textTemp, textCity, textDesc, textDate, textWind , textHumidity, textPressure, locationText;
+    private TextView textTemp, textCity, textDesc, textDate;
     private ImageView weatherImg;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     FusedLocationProviderClient mFusedLocationClient;
@@ -71,9 +71,6 @@ public class MainActivity extends AppCompatActivity {
         textCity =  findViewById(R.id.city);
         textDesc =  findViewById(R.id.desc);
         textDate =  findViewById(R.id.date);
-        textWind =  findViewById(R.id.wind);
-        textHumidity =  findViewById(R.id.humidity);
-        textPressure =  findViewById(R.id.pressure);
         weatherImg =  findViewById(R.id.weather_img);
         locationBtn =  findViewById(R.id.locationBtn);
 
@@ -121,23 +118,9 @@ public class MainActivity extends AppCompatActivity {
                     String weather = object.getString("main");
                     String detail = object.getString("description");
 
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat("EEEE-MM-dd");
-                    String formatted_date = sdf.format(calendar.getTime());
-
-                    JSONObject wind_object = response.getJSONObject("wind");
-                    String wind = wind_object.getString("speed")+" m/s";
-
-                    String humidity = main_object.getString("humidity")+ "%";
-                    String pressure = main_object.getString("pressure") + " hpa";
-
                     textTemp.setText(temp);
                     textCity.setText(city);
                     textDesc.setText(detail);
-                    textDate.setText(formatted_date);
-                    textWind.setText(wind);
-                    textHumidity.setText(humidity);
-                    textPressure.setText(pressure);
 
                     switch(weather){
                         case "Clouds":
@@ -211,23 +194,9 @@ public class MainActivity extends AppCompatActivity {
                     String weather = object.getString("main");
                     String detail = object.getString("description");
 
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat("EEEE-MM-dd");
-                    String formatted_date = sdf.format(calendar.getTime());
-
-                    JSONObject wind_object = response.getJSONObject("wind");
-                    String wind = wind_object.getString("speed")+" m/s";
-
-                    String humidity = main_object.getString("humidity")+ "%";
-                    String pressure = main_object.getString("pressure") + " hpa";
-
                     textTemp.setText(temp);
                     textCity.setText(city);
                     textDesc.setText(detail);
-                    textDate.setText(formatted_date);
-                    textWind.setText(wind);
-                    textHumidity.setText(humidity);
-                    textPressure.setText(pressure);
 
                     switch(weather){
                         case "Clouds":
